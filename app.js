@@ -1,5 +1,6 @@
 const express = require("express");
-// const cors = require("cors");
+const mongoose = require("mongoose");
+const cors = require("cors");
 const dotenv = require("dotenv");
 
 const bookRoutes = require("./routes/bookRoutes");
@@ -10,12 +11,23 @@ dotenv.config();
 const PORT = process.env.PORT || 3001;
 
 const app = express();
-// app.use();
+
+// Middleware
+app.use(cors());
 app.use(express.json());
 
+// MongoDB connection (no deprecated options)
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ Successfully connected to MongoDB"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
+
+// Routes
 app.use("/api/books", bookRoutes);
 app.use("/api/authors", authorRoutes);
 
+// Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
